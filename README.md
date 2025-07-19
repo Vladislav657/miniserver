@@ -34,6 +34,7 @@ Connection from <ip>:<port>
 ```bash
 Connection from <ip>:<port> closed
 ```
+Если команда неизвестна — ERROR.
 
 # Пример работы сервера
 ```bash
