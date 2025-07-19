@@ -6,8 +6,13 @@ PORT = 666
 
 
 async def client():
-    client_port = input("Enter client port: ")
-    reader, writer = await asyncio.open_connection(HOST, PORT, local_addr=(HOST, client_port))
+    try:
+        client_ip, client_port = input("Enter client address: ").split(':')
+    except ValueError:
+        print("Invalid address")
+        return
+
+    reader, writer = await asyncio.open_connection(HOST, PORT, local_addr=(client_ip, client_port))
     try:
         while True:
             message = input("CLIENT:\t").upper()
