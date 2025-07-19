@@ -3,11 +3,13 @@
 ```bash
 # Запуск сервера (в первом терминале)
 python server.py
-
+```
+```bash
 # Запуск клиентов (во втором терминале)
 python client.py
 Enter client address: 127.6.7.9:50000 # указать ip:port клиента
-
+```
+```bash
 python client.py # (в третьем терминале)
 Enter client address: 127.6.7.10:50039
 
