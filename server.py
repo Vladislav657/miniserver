@@ -11,19 +11,19 @@ names_lock = asyncio.Lock()
 passwords_lock = asyncio.Lock()
 
 
-def safe_decode(data):
+def safe_decode(data): # безопасное декодирование
     try:
         return data.decode("utf-8").strip()
     except UnicodeDecodeError:
         return data.decode("gbk").strip()
 
 
-async def handle_client(reader, writer):
+async def handle_client(reader, writer): # основная логика сервера
     addr = writer.get_extra_info('peername')
     print(f"Connection from {addr[0]}:{addr[1]}")
 
     try:
-        data = await reader.read(1024)
+        data = await reader.readuntil(b"\n")
         data = safe_decode(data)
         login, password = data.split()
         async with passwords_lock:
@@ -37,7 +37,7 @@ async def handle_client(reader, writer):
         await writer.drain()
 
     except ValueError:
-        writer.write(b"Invalid input")
+        writer.write(b"Invalid input\n")
         await writer.drain()
         writer.close()
         print(f"Connection from {addr[0]}:{addr[1]} closed")
@@ -46,7 +46,7 @@ async def handle_client(reader, writer):
 
     try:
         while True:
-            data = await reader.read(1024)
+            data = await reader.readuntil(b"\n")
             data = safe_decode(data)
             if data == '':
                 break
@@ -79,7 +79,7 @@ async def handle_client(reader, writer):
         await writer.wait_closed()
 
 
-async def main():
+async def main(): # запуск сервера
     server = await asyncio.start_server(handle_client, HOST, PORT)
     async with server:
         await server.serve_forever()
