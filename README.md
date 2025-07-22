@@ -6,13 +6,22 @@ python server.py
 ```
 ```bash
 # Запуск клиентов (во втором терминале)
-python client.py
-Enter client address: 127.6.7.9:50000 # указать ip:port клиента
+Enter '<login> <password>': <login> <password> # необходимо ввести логин пароль
+
+SERVER: OK # если логин существует, то проверяется пароль, если верный - "OK", иначе - "WRONG PASSWORD"
+           # если логин не существует, то введённые логин и пароль добавляются и выводится "OK"
+
+# далее идёт тест на асинхронную реакцию, если пройден - "Async test ok", иначе - "Async test failed"
+Async test ok
+TEST1: ERROR
+HELLO: HI!
+GET NAME: NAME NOT FOUND
 ```
 ```bash
 python client.py # (в третьем терминале)
-Enter client address: <ip>:<port>
+Enter '<login> <password>': <login> <password>
 
+...
 # и т. д. каждый клиент в своем терминале
 ```
 В окне сервера при установке соединения выводится сообщение:
@@ -38,43 +47,44 @@ Connection from <ip>:<port> closed
 
 # Пример работы сервера
 ```bash
-# первый клиент
+# клиент
 
 python client.py
-Enter client address: 127.6.7.9:50000
-CLIENT: set name 54
+Enter '<login> <password>': wassup 42
+
 SERVER: OK
+Async test ok
+        TEST1: ERROR
+        HELLO: HI!
+        GET NAME: NAME NOT FOUND
+
+CLIENT: set name meow
+
+SERVER: OK
+
+
+SERVER: HI!
 
 CLIENT: get name
 
-SERVER: NAME 54
+SERVER: NAME meow
 
 CLIENT: exit
 
 SERVER: MISSION ACCOMPLISHED
 
 python client.py
-Enter client address: 127.6.7.9:50000
-CLIENT: get name
-
-SERVER: NAME 54
-
-CLIENT: exit
-
-SERVER: MISSION ACCOMPLISHED
-```
-```bash
-# второй клиент
-
-python client.py
-Enter client address: 127.5.3.2:55499
-CLIENT: set name 65
+Enter '<login> <password>': wassup 42
 
 SERVER: OK
+Async test ok
+        TEST1: ERROR
+        HELLO: HI!
+        GET NAME: NAME meow
 
-CLIENT: get name 
+CLIENT: get name
 
-SERVER: NAME 65
+SERVER: NAME meow
 
 CLIENT: exit
 
@@ -84,10 +94,8 @@ SERVER: MISSION ACCOMPLISHED
 # сервер
 
 python server.py
-Connection from 127.5.3.2:55499
-Connection from 127.6.7.9:50000
-Connection from 127.6.7.9:50000 closed
-Connection from 127.6.7.9:50000
-Connection from 127.5.3.2:55499 closed
-Connection from 127.6.7.9:50000 closed
+Connection from 127.0.0.1:51714
+Connection from 127.0.0.1:51714 closed
+Connection from 127.0.0.1:51736
+Connection from 127.0.0.1:51736 closed
 ```
