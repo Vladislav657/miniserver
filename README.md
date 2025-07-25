@@ -6,19 +6,28 @@ python server.py
 ```
 ```bash
 # Запуск клиентов (во втором терминале)
+
+# тест на асинхронную реакцию, если пройден - "Async test ok", иначе - "Async test failed"
+Client 1: HELLO -> HI!
+Client 2: GET NAME -> NAME NOT FOUND
+Client 3: GET NAME -> NAME NOT FOUND
+Client 4: GET NAME -> NAME NOT FOUND
+Client 5: HELLO -> HI!
+
+Result: 5 of 5 clients ok
+Async test ok
+
 Enter '<login> <password>': <login> <password> # необходимо ввести логин пароль
 
 SERVER: OK # если логин существует, то проверяется пароль, если верный - "OK", иначе - "WRONG PASSWORD"
            # если логин не существует, то введённые логин и пароль добавляются и выводится "OK"
 
-# далее идёт тест на асинхронную реакцию, если пройден - "Async test ok", иначе - "Async test failed"
-Async test ok
-TEST1: ERROR
-HELLO: HI!
-GET NAME: NAME NOT FOUND
+...
 ```
 ```bash
 python client.py # (в третьем терминале)
+
+...
 Enter '<login> <password>': <login> <password>
 
 ...
@@ -50,18 +59,23 @@ Connection from <ip>:<port> closed
 # клиент
 
 python client.py
+
+Client 1: HELLO -> HI!
+Client 2: GET NAME -> NAME NOT FOUND
+Client 3: GET NAME -> NAME NOT FOUND
+Client 4: GET NAME -> NAME NOT FOUND
+Client 5: HELLO -> HI!
+
+Result: 5 of 5 clients ok
+Async test ok
+
 Enter '<login> <password>': wassup 42
 
 SERVER: OK
-Async test ok
-        TEST1: ERROR
-        HELLO: HI!
-        GET NAME: NAME NOT FOUND
 
 CLIENT: set name meow
 
 SERVER: OK
-
 
 SERVER: HI!
 
