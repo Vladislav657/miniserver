@@ -60,10 +60,10 @@ Connection from <ip>:<port> closed
 
 python client.py
 
-Client 1: HELLO -> HI!
-Client 2: GET NAME -> NAME NOT FOUND
-Client 3: GET NAME -> NAME NOT FOUND
-Client 4: GET NAME -> NAME NOT FOUND
+Client 3: SET NAME Client3 -> OK
+Client 1: SET NAME Client1 -> OK
+Client 2: SET NAME Client2 -> OK
+Client 4: SET NAME Client4 -> OK
 Client 5: HELLO -> HI!
 
 Result: 5 of 5 clients ok
