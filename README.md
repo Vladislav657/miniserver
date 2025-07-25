@@ -8,6 +8,8 @@ python server.py
 # Запуск клиентов (во втором терминале)
 
 # тест на асинхронную реакцию, если пройден - "Async test ok", иначе - "Async test failed"
+Enter number of clients for async test: 5 # здесь ввести количество клиентов для теста
+
 Client 1: HELLO -> HI!
 Client 2: GET NAME -> NAME NOT FOUND
 Client 3: GET NAME -> NAME NOT FOUND
@@ -59,7 +61,7 @@ Connection from <ip>:<port> closed
 # клиент
 
 python client.py
-
+Enter number of clients for async test: 5
 Client 3: SET NAME Client3 -> OK
 Client 1: SET NAME Client1 -> OK
 Client 2: SET NAME Client2 -> OK
