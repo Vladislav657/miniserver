@@ -1,4 +1,5 @@
 import asyncio
+import random
 
 
 HOST = "127.0.0.1"
@@ -12,38 +13,61 @@ def safe_decode(data): # безопасное декодирование
         return data.decode("gbk").strip()
 
 
-async def check_async(reader, writer): # проверка на асинхронность
-    requests = [
-        b"TEST1",
-        b"HELLO",
-        b"GET NAME"
-    ]
-
-    for req in requests:
-        writer.write(req + b"\n")
+async def auth(reader, writer, client_id): # логин/пароль для теста
+    auth_data = f"user{client_id} pass{client_id}"
+    writer.write(f"{auth_data}\n".encode())
     await writer.drain()
 
-    responses = []
-    for _ in requests:
-        try:
-            data = await asyncio.wait_for(reader.readuntil(b"\n"), timeout=1.0)
-            responses.append(safe_decode(data))
-        except Exception as e:
-            responses.append(f"Test error: {e}")
+    response = await reader.readuntil(b"\n")
+    return safe_decode(response).strip() == "OK"
 
-    if all("Test error" not in r for r in responses):
-        print("Async test ok")
-        for req, resp in zip(requests, responses):
-            print(f"\t{safe_decode(req)}: {resp.strip()}")
-        return True
-    else:
-        print("Async test failed")
-        for req, resp in zip(requests, responses):
-            print(f"\t{safe_decode(req)}: {resp}")
+
+async def async_test_client(client_id): # запуск тестирующего клиента
+    reader, writer = await asyncio.open_connection(HOST, PORT)
+    try:
+        if not await auth(reader, writer, client_id):
+            print(f"Client {client_id}: auth error")
+            return False
+
+        commands = [
+            f"SET NAME Client{client_id}",
+            "GET NAME",
+            "HELLO"
+        ]
+        cmd = random.choice(commands)
+
+        writer.write(f"{cmd}\n".encode())
+        await writer.drain()
+
+        response = await reader.readuntil(b"\n")
+        print(f"Client {client_id}: {cmd} -> {safe_decode(response).strip()}")
+
+    except Exception as e:
+        print(f"Client {client_id} error: {str(e)}")
         return False
+
+    finally:
+        writer.close()
+        await writer.wait_closed()
+        return True
+
+
+async def test_async(num_clients): # подключение num_clients клиентов
+    tasks = [async_test_client(i) for i in range(1, num_clients + 1)]
+    results = await asyncio.gather(*tasks)
+
+    successful = sum(results)
+    print(f"\nResult: {successful} of {len(results)} clients ok")
+    return successful == num_clients
 
 
 async def client(): # основная логика клиента
+    num_clients = int(input("Enter number of clients for async test: "))
+    if not await test_async(num_clients):
+        print("Async test failed")
+        return
+
+    print(f"Async test ok")
     try:
         user_data = input("Enter '<login> <password>': ").strip()
     except ValueError:
@@ -59,11 +83,6 @@ async def client(): # основная логика клиента
         data = safe_decode(data)
         print("\nSERVER:\t" + data)
         if data != "OK":
-            writer.close()
-            await writer.wait_closed()
-            return
-
-        if not await check_async(reader, writer):
             writer.close()
             await writer.wait_closed()
             return
